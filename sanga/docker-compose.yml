@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mysql:9.0
+    container_name: mysql-sanga-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    ports:
+      - "5554:3306"
+    volumes:
+      - sanga-db:/var/lib/mysql
+    networks:
+      - sanga-network
+
+  phpmyadmin:
+    container_name: phpmyadmin-sanga
+    image: phpmyadmin:5.2
+    restart: always
+    ports:
+      - "5555:80"
+    networks:
+      - sanga-network
+    environment:
+      PMA_HOST: db
+      UPLOAD_LIMIT: 100000000
+    depends_on:
+      - db
+
+networks:
+  sanga-network:
+    name: sanga-network
+    driver: bridge
+    
+volumes:
+  sanga-db:
+    driver: local
